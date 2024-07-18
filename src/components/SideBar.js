@@ -27,6 +27,7 @@ function SideBar() {
      console.log("resopnse",response)
      if(response?.data?.success){
       dispatch(logout())
+      localStorage.removeItem('token');
       navigate('/email')
      }    
 
