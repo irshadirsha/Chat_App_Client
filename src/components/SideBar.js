@@ -1,23 +1,36 @@
 import React, { useEffect, useState } from 'react'
 import { MdChat } from "react-icons/md";
 import { FaUserPlus } from "react-icons/fa";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { TbLogout2 } from "react-icons/tb";
 import Avatar from './Avatar';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EdittUserDetails from './EdittUserDetails';
 import { IoArrowUndoSharp } from "react-icons/io5";
 import SearchUser from './SearchUser';
 import { FaImage } from "react-icons/fa6";
 import { FaVideo } from "react-icons/fa6";
+import axios from 'axios';
+import { logout } from '../redux/userSlice';
 
 function SideBar() {
     const user= useSelector(state=>state?.user)
+    const dispatch=useDispatch()
+    const navigate=useNavigate()
     const [editUserOpen,setEditUserOpen]=useState(false)
     const [allUser,setAllUser]=useState([])
     const [openSearchUser,setOpenSearchUser]=useState(false)
   const socketConnection= useSelector(state=>state?.user?.socketConnection)
+   const handlelogout=async()=>{
+     const url=`${process.env.REACT_APP_BACKEND_URL}/api/logout`
+     const response = await axios.get(url);
+     console.log("resopnse",response)
+     if(response?.data?.success){
+      dispatch(logout())
+      navigate('/email')
+     }    
 
+   }
   useEffect(()=>{
     if(socketConnection){
       socketConnection.emit('sideBar',user?._id)
@@ -71,7 +84,7 @@ function SideBar() {
                     />
 
                 </button>
-                <button title='Logout' className='h-12 w-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded'>
+                <button onClick={handlelogout} title='Logout' className='h-12 w-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded'>
                 <span className='pr-1'>
                 <TbLogout2
                 size={20}
